@@ -1,0 +1,57 @@
+#qurey {
+    width: 200px;
+}
+
+#movies {
+    height: 440px;
+    width: 400px;
+    background-color: #121826;
+    border: 5px soild teal;
+    overflow:auto;
+    margin-left: 55%;
+    margin-top: 10px;    
+    
+    border-radius: 20px;
+}
+#movies>#divimg{
+    display: flex;
+    margin: auto;
+    width: 350px;
+    background-color: #1A2133;
+    margin-top: 10px;
+    border-radius: 10px;
+    justify-content: baseline;
+    align-items: center;
+    border: 2px solid white;
+}
+#divimg:hover{
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;    }
+#divimg>div:nth-child(1){
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+}
+#divimg>div:nth-child(2){
+    /* background-color: tomato; */
+    margin-left: 10px;
+    color: white;
+}
+#divimg>div:nth-child(2) p:nth-child(1){
+    margin-top: 5px;
+    font-size: 20px;
+    font-weight: bold;
+}
+#divimg>div:nth-child(2) p:nth-child(2),
+#divimg>div:nth-child(2) p:nth-child(3),
+#divimg>div:nth-child(2) p:nth-child(4){
+    margin-top: -18px;
+}
+#img{
+    width: 100px;
+    height: 100px;
+}
+#qurey:hover{
+    display: block;
+    background-color: #1A2133;
+}

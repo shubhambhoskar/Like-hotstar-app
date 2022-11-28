@@ -1,0 +1,21 @@
+#trendHead{
+    /* background-color: palegoldenrod; */
+    width: 90vw;
+    margin: auto;
+    color: white;
+}
+#trend{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#trend>img{
+    width: 150px;
+    height: 250px;
+    border-radius: 20px;
+    border: 2px solid white;
+}
+#trend>img:hover{
+    width: 250px;
+    height: 360px;
+}

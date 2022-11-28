@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini | Hotstart App</title>
+    <link rel="stylesheet" href="./navbartop.css">
+    <link rel="stylesheet" href="./scroll.css">
+    <link rel="stylesheet" href="./sideDetails.css">
+    <link rel="stylesheet" href="./trend.css">
+</head>
+<style>
+    body {
+        margin: 0px;
+        padding: 0px;
+        flex-wrap: wrap;
+    }
+
+    #trend {
+        width: 90vw;
+        height: 300px;
+        /* background-color: teal; */
+        margin: auto;
+    }
+</style>
+
+<body>
+
+    <div id="body">
+        <!-- not change -->
+        <div id="navbar">
+            <div id="navbarLeft">
+                <div>
+                    <ion-icon name="menu-sharp"></ion-icon>
+                </div>
+                <div>
+                    <img src="https://secure-media.hotstarext.com/web-assets/prod/images/brand-logos/disney-hotstar-logo-dark.svg"
+                        alt="">
+                </div>
+                <div>
+                    <p>TV</p>
+                </div>
+                <div>
+                    <p>Moves</p>
+                </div>
+                <div>
+                    <p>Sports</p>
+                </div>
+                <div>
+                    <p>Disney+</p>
+                </div>
+                <div>
+                    <p>KIDS</p>
+                </div>
+            </div>
+            <div id="navbarRight">
+                <input type="text" id="qurey" oninput="debonuce(main,1000)" placeholder="Serach Movies">
+                <button onclick="getMoviesPoster()">
+                    <ion-icon name="search-sharp"></ion-icon>
+                </button>
+                <button id="subscribe">SUBSCRIBE</button>
+                <button id="login">LOGIN</button>
+            </div>
+        </div>
+        <!-- not change -->
+
+        <div id="navbarfilter">
+            <!-- <button id="sortLH" onclick="sortLH()">Sort Movies (Years)</button> -->
+        </div>
+
+        <h3 id="result"></h3>
+        <div id="movies"></div>
+        <div id="sideDetails"></div>
+        <h1 id="trendHead">Trending Movies</h1>
+        <div id="trend"></div>
+    </div>
+
+
+
+</body>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</html>
+<script>
+    let movies = document.getElementById("movies");
+    let key = "7c5bb109";
+
+    async function main() {
+        try {
+            let qurey = document.getElementById("qurey").value;
+            console.log("qurey:", qurey);
+            let res = await fetch(`https://www.omdbapi.com/?apikey=${key}&s=${qurey}`);
+
+            let data = await res.json();
+            // console.log("data:", data)
+            if (data.Search != undefined) {
+                appendMovies(data.Search)
+            }
+
+            // console.log("dataSearch:", data.Search)
+            // return data.Search;
+        }
+        catch {
+            console.log("err:", err);
+        }
+    }
+
+    var dataImdb;
+    function appendMovies(data) {
+        movies.innerHTML = null;
+        data.forEach(function (ele, index) {
+            let p = document.createElement("p");
+            p.innerText = ele.Title;
+
+            let imdb = document.createElement("p");
+            imdb.innerText = `Rating: ${ele.imdbID}`;
+
+            let x = getId(ele.imdbID);
+            // console.log("x:",x.then)
+            async function getId(data) {
+                // console.log("imbd:",data);
+                let res = await fetch(`https://www.omdbapi.com/?apikey=${key}&i=${data}`);
+                // console.log("res IMDB:",res);
+                let dataImdb = await res.json();
+                // console.log("data IMDB:", dataImdb);
+
+                let Poster = document.createElement("img");
+                Poster.src = dataImdb.Poster;
+                Poster.setAttribute("id", "img");
+
+                let Runtime = document.createElement("p");
+                Runtime.innerText = `Run Time: ${dataImdb.Runtime}`;
+
+                let Type = document.createElement("p");
+                Type.innerText = `Type: ${dataImdb.Type}`;
+
+                let divimg = document.createElement("div");
+                divimg.setAttribute("id", "divimg")
+                let divimg1 = document.createElement("div");
+                let divimg2 = document.createElement("div");
+
+                divimg.addEventListener("click", function () {
+                    // console.log("divimage");
+                    mysideMovies(dataImdb);
+                })
+
+                // console.log(dataImdb.imdbRating);
+                let rating = document.createElement("p");
+                rating.innerText = `Rating: ${dataImdb.imdbRating}`;
+                if (dataImdb.imdbRating <= 4.5) {
+                    rating.innerText = `Rating: ${dataImdb.imdbRating} ⭐`;
+                } else if (dataImdb.imdbRating > 4.5 && dataImdb.imdbRating <= 5.9) {
+                    rating.innerText = `Rating: ${dataImdb.imdbRating} ⭐⭐`;
+                } else if (dataImdb.imdbRating >= 6 && dataImdb.imdbRating <= 8) {
+                    rating.innerText = `Rating: ${dataImdb.imdbRating} ⭐⭐⭐`;
+                } else if (dataImdb.imdbRating > 8 && dataImdb.imdbRating <= 8.9) {
+                    rating.innerText = `Rating: ${dataImdb.imdbRating} ⭐⭐⭐⭐`;
+                } else if (dataImdb.imdbRating > 9 && dataImdb.imdbRating <= 10) {
+                    rating.innerText = `Rating: ${dataImdb.imdbRating} ⭐⭐⭐⭐⭐`;
+                }
+                divimg1.append(Poster)
+                divimg2.append(p, rating, Runtime, Type)
+                divimg.append(divimg1, divimg2);
+                movies.append(divimg);
+                // return rating
+            }
+            // movies.append(p);
+        })
+    }
+
+    function debonuce(func, delay) {
+        if (id) {
+            clearInterval(id);
+        }
+        var id = setTimeout(function () {
+            // console.log('id:', id)
+
+            func();//main
+        }, delay)
+    }
+
+
+    // side Movies details
+    let sideDetails = document.getElementById("sideDetails");
+    function mysideMovies(dataImdb) {
+        sideDetails.innerHTML = "";
+
+        // console.log("side Movies")
+        // console.log('dataImdb:', dataImdb)
+
+        let Sidediv = document.createElement("div");
+        Sidediv.setAttribute("id", "Sidediv")
+        let sidedivImg = document.createElement("div");
+        sidedivImg.setAttribute("id", "sidedivImg");
+        let sidedivDetails = document.createElement("div");
+        sidedivDetails.setAttribute("id", "sidedivDetails");
+
+        let SidePoster = document.createElement("img");
+        SidePoster.src = dataImdb.Poster;
+        let SideTiltle = document.createElement("h1");
+        SideTiltle.innerText = dataImdb.Title;
+        let sidep1 = document.createElement("p");
+        sidep1.innerText = `Plot: ${dataImdb.Plot}`;
+        let sidep2 = document.createElement("p");
+        sidep2.innerText = `Released: ${dataImdb.Released}`;
+        let sidep3 = document.createElement("p");
+        sidep3.innerText = `Run Time: ${dataImdb.Runtime}`;
+        let sidep4 = document.createElement("p");
+        sidep4.innerText = `IMDB ID: ${dataImdb.imdbRating}`
+        if (dataImdb.imdbRating <= 4.5) {
+            sidep4.innerText = `Rating: ${dataImdb.imdbRating} ⭐`;
+        } else if (dataImdb.imdbRating > 4.5 && dataImdb.imdbRating <= 5.9) {
+            sidep4.innerText = `Rating: ${dataImdb.imdbRating} ⭐⭐`;
+        } else if (dataImdb.imdbRating >= 6 && dataImdb.imdbRating <= 8) {
+            sidep4.innerText = `Rating: ${dataImdb.imdbRating} ⭐⭐⭐`;
+        } else if (dataImdb.imdbRating > 8 && dataImdb.imdbRating <= 8.9) {
+            sidep4.innerText = `Rating: ${dataImdb.imdbRating} ⭐⭐⭐⭐`;
+        } else if (dataImdb.imdbRating > 9 && dataImdb.imdbRating <= 10) {
+            sidep4.innerText = `Rating: ${dataImdb.imdbRating} ⭐⭐⭐⭐⭐`;
+        }
+
+        let sidep5 = document.createElement("p");
+        sidep5.innerText = `Rotten Tomatoes: ${dataImdb.Ratings[1].Value}`
+
+        let sidep6 = document.createElement("p");
+        sidep6.innerText = `Genre: ${dataImdb.Genre}`
+
+        let sidep7 = document.createElement("p");
+        sidep7.innerText = `Metascore: ${dataImdb.Metascore}`
+
+        let sidep8 = document.createElement("p");
+        sidep8.innerText = `Rateds: ${dataImdb.Rated}`
+
+
+        sidedivImg.append(SidePoster);
+        sidedivDetails.append(SideTiltle, sidep1, sidep2, sidep3, sidep4, sidep5, sidep6, sidep7, sidep8);
+        Sidediv.append(sidedivImg, sidedivDetails)
+        sideDetails.append(Sidediv);
+
+    }
+
+
+    let moviesdata=[
+{name: "Mad Max: Fury Road", date: "Date:-2015",poster: "https://m.media-amazon.com/images/M/MV5BN2EwM2I5OWMtMGQyMi00Zjg1LWJkNTctZTdjYTA4OGUwZjMyXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_FMjpg_UX1000_.jpg",
+rating: "8.1"},
+{name: "How to Train Your Dragon", date: "Date:-2010",poster: "https://m.media-amazon.com/images/M/MV5BMjA5NDQyMjc2NF5BMl5BanBnXkFtZTcwMjg5ODcyMw@@._V1_.jpg",
+rating: "8.1"},
+{name: "Beauty and the Beast", date: "Date:-1991",poster: "https://lumiere-a.akamaihd.net/v1/images/p_beautyandthebeast_19752_32e65c36.jpeg",
+rating: "8.0"},
+{name: "CAPTAIN AMERICA: THE FIRST AVENGER", date: "Date:-2011",poster: "https://resizing.flixster.com/iRNo7fTEDbnilBNqTC4JHbogxD0=/fit-in/180x240/v2/https://flxt.tmsimg.com/assets/p8205710_p_v12_aj.jpg",
+rating: "8.9"},
+{name: "THE INCREDIBLE HULK ", date: "Date:-2008",poster: "https://resizing.flixster.com/G3zjY751W881qOfX4AFYM3nlb_s=/fit-in/180x240/v2/https://flxt.tmsimg.com/assets/p176337_p_v8_am.jpg",
+rating: "7.8"},
+{name: "SPIDER-MAN: NO WAY HOME ", date: "Date:-2021",poster: "https://resizing.flixster.com/ocv7hmFMoAI1MJN3OU_uSSQ6-0k=/fit-in/180x240/v2/https://resizing.flixster.com/8PNiwC2bpe9OecfYZSOVkvYC5vk=/ems.cHJkLWVtcy1hc3NldHMvbW92aWVzL2U5NGM0Y2Q1LTAyYTItNGFjNC1hNWZhLWMzYjJjOTdjMTFhOS5qcGc=",
+rating: "9.2"},
+{name: "Cars", date: "Date:-2006",poster: "https://i.pinimg.com/474x/83/74/f0/8374f08b658d20b7feccf78d2d44f9a6.jpg",
+rating: "7.2"},
+
+]
+let trend= document.getElementById("trend");
+dispalyTrending(moviesdata)
+function dispalyTrending(moviesdata){
+    moviesdata.forEach(function(ele){
+        // console.log(ele);
+        let trenddiv = document.createElement("div");
+        let trendImg = document.createElement("img");
+        trendImg.src = ele.poster;
+
+        trend.append(trendImg);
+
+    })
+}
+
+
+
+</script>
